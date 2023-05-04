@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# React JS Master Class
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[React JS Master Class in nomdcoder.co](https://nomadcoders.co/react-masterclass)
 
 ## Available Scripts
 
