@@ -1,55 +1,52 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
-const Father = styled.div`
+const Wrapper = styled.div`
   display: flex;
 `;
 
+const rotateAnime = keyframes`
+  0% {
+    transform: rotate(0deg);
+    border-radius: 0px;
+  }
+  50% {
+    transform: rotate(360deg);
+    border-radius: 100px;
+  }
+  100% {
+    border-radius: 0px;
+  }
+`;
+
 const Box = styled.div`
-  background-color: ${(props) => props.bgColor};
-  width: 100px;
-  height: 100px;
-`;
-
-const Text = styled.span`
-  color: white;
-`;
-
-const Circle = styled(Box)`
-  border-radius: 50%;
-`;
-
-const Btn = styled.button`
-  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 200px;
   background-color: tomato;
-  border: 0;
-  border-radius: 15px;
-`;
+  animation: ${rotateAnime} 1s linear infinite;
 
-const Input = styled.input.attrs({ required: true, minLength: 10 })`
-  background-color: blue;
+  span {
+    font-size: 36px;
+
+    &:hover {
+      font-size: 46px;
+    }
+
+    &:active {
+      opacity: 0.4;
+    }
+  }
 `;
 
 function App() {
   return (
-    <div>
-      <Father as="header">
-        <Box bgColor="teal">
-          <Text>Hello</Text>
-        </Box>
-        <Circle bgColor="tomato" />
-      </Father>
-
-      <Btn>Log in</Btn>
-      <Btn as="a" href="/">
-        Log out
-      </Btn>
-
-      <Input />
-      <Input />
-      <Input />
-      <Input />
-      <Input />
-    </div>
+    <Wrapper>
+      <Box>
+        <span>😀</span>
+      </Box>
+    </Wrapper>
   );
 }
 
