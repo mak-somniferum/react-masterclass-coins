@@ -18,19 +18,38 @@ const Circle = styled(Box)`
   border-radius: 50%;
 `;
 
+const Btn = styled.button`
+  color: white;
+  background-color: tomato;
+  border: 0;
+  border-radius: 15px;
+`;
+
+const Input = styled.input.attrs({ required: true, minLength: 10 })`
+  background-color: blue;
+`;
+
 function App() {
   return (
-    // <div style={{ display: "flex" }}>
-    //   <div style={{ backgroundColor: "teal", width: 100, height: 100 }}></div>
-    //   <div style={{ backgroundColor: "tomato", width: 100, height: 100 }}></div>
-    // </div>
+    <div>
+      <Father as="header">
+        <Box bgColor="teal">
+          <Text>Hello</Text>
+        </Box>
+        <Circle bgColor="tomato" />
+      </Father>
 
-    <Father>
-      <Box bgColor="teal">
-        <Text>Hello</Text>
-      </Box>
-      <Circle bgColor="tomato" />
-    </Father>
+      <Btn>Log in</Btn>
+      <Btn as="a" href="/">
+        Log out
+      </Btn>
+
+      <Input />
+      <Input />
+      <Input />
+      <Input />
+      <Input />
+    </div>
   );
 }
 
