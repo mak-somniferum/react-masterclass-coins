@@ -1,11 +1,25 @@
-import Circle from "./Circle";
+import { useState } from "react";
 
 function App() {
-  // interface가 정의된 컴포넌트에 반드시 보내야하는 prop이 들어가지 않으면 에러 뜸.
+  const [value, setValue] = useState("");
+  const onChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const {
+      currentTarget: { value },
+    } = event;
+    setValue(value);
+  };
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log("hello", value);
+  };
+
   return (
     <div>
-      <Circle borderColor="black" bgColor="teal" />
-      <Circle text="im here" bgColor="tomato" />
+      <form onSubmit={onSubmit}>
+        <input value={value} onChange={onChange} type="text" placeholder="username" />
+        <button>Log in</button>
+      </form>
     </div>
   );
 }
