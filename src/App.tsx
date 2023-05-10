@@ -1,22 +1,26 @@
 import styled from "styled-components";
 import { useState } from "react";
 
-const Container = styled.div`
-  background-color: ${(props) => props.theme.bgColor};
-`;
-
-const H1 = styled.h1<{ active?: boolean }>`
-  color: ${(props) => props.theme.textColor};
-  display: ${(props) => (props.active ? "block" : "none")};
-`;
-
 interface DummyProps {
   text: string;
   active?: boolean;
 }
 
+interface TitleProps {
+  active?: boolean;
+}
+
+const Container = styled.div`
+  background-color: ${(props) => props.theme.bgColor};
+`;
+
+const Title = styled.h1<TitleProps>`
+  color: ${(props) => props.theme.textColor};
+  display: ${(props) => (props.active ? "block" : "none")};
+`;
+
 function Dummy({ text, active = false }: DummyProps) {
-  return <H1 active={active}>{text}</H1>;
+  return <Title active={active}>{text}</Title>;
 }
 
 function App() {
