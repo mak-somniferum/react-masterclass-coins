@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Switch, Route, useLocation, useParams } from "react-router-dom";
+import { Switch, Route, useLocation, useParams, Link, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import Price from "./Price";
 import Chart from "./Chart";
@@ -52,6 +52,28 @@ const OverviewItem = styled.div`
 
 const Description = styled.p`
   margin: 20px 0;
+`;
+
+const Tabs = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 25px 0;
+`;
+
+const Tab = styled.div<{ isActive: boolean }>`
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-size: 400;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: ${(props) => (props.isActive ? props.theme.accentColor : props.theme.textColor)};
+
+  a {
+    display: block;
+    padding: 10px;
+  }
 `;
 
 interface RouteParams {
@@ -123,6 +145,8 @@ function Coin() {
   const { state } = useLocation<RouteState>();
   const [info, setInfo] = useState<InfoData>();
   const [priceInfo, setPriceInfo] = useState<PriceData>();
+  const priceMatch = useRouteMatch("/:coinId/price"); // 현재 링크가 /:coinId/price 에 위치해 있는지 알려준다.
+  const chartMatch = useRouteMatch("/:coinId/chart");
 
   useEffect(() => {
     (async () => {
@@ -176,6 +200,15 @@ function Coin() {
               <span>{priceInfo?.max_supply}</span>
             </OverviewItem>
           </Overview>
+
+          <Tabs>
+            <Tab isActive={chartMatch !== null}>
+              <Link to={`/${coinId}/chart`}>Chart</Link>
+            </Tab>
+            <Tab isActive={priceMatch !== null}>
+              <Link to={`/${coinId}/price`}>Price</Link>
+            </Tab>
+          </Tabs>
 
           <Switch>
             <Route path={`/${coinId}/price`}>
