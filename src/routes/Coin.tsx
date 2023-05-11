@@ -25,6 +25,33 @@ const Loader = styled.span`
   text-align: center;
 `;
 
+const Overview = styled.div`
+  display: flex;
+  justify-content: space-between;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px 20px;
+`;
+
+const OverviewItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  span {
+    &:first-child {
+      font-weight: 400;
+      font-size: 10px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+  }
+`;
+
+const Description = styled.p`
+  margin: 20px 0;
+`;
+
 interface RouteParams {
   coinId: string;
 }
@@ -102,6 +129,7 @@ function Coin() {
 
       setInfo(infoData);
       setPriceInfo(priceData);
+      setLoading(false);
 
       // GET ++ data json keys, value types ++
       // 1. console.log(infoData)
@@ -115,9 +143,39 @@ function Coin() {
   return (
     <Container>
       <Header>
-        <Title>{state?.name || "Loading..."}</Title>
+        <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name}</Title>
       </Header>
-      {loading ? <Loader>Loading...</Loader> : null}
+      {loading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <>
+          <Overview>
+            <OverviewItem>
+              <span>rank:</span>
+              <span>{info?.rank}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>symbol:</span>
+              <span>{info?.symbol}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>open source:</span>
+              <span>{info?.open_source ? "Yes" : "No"}</span>
+            </OverviewItem>
+          </Overview>
+          <Description>{info?.description}</Description>
+          <Overview>
+            <OverviewItem>
+              <span>total suply:</span>
+              <span>{priceInfo?.total_supply}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>max supply:</span>
+              <span>{priceInfo?.max_supply}</span>
+            </OverviewItem>
+          </Overview>
+        </>
+      )}
     </Container>
   );
 }
