@@ -3,6 +3,8 @@ import { Switch, Route, useLocation, useParams, Link, useRouteMatch } from "reac
 import styled from "styled-components";
 import Price from "./Price";
 import Chart from "./Chart";
+import { useQuery } from "react-query";
+import { fetchCoinInfo, fetchCoinTickers } from "./api";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -18,7 +20,7 @@ const Header = styled.header`
 `;
 
 const Title = styled.h1`
-  color: ${(props) => props.theme.accentColor};
+  color: ${props => props.theme.accentColor};
   font-size: 48px;
 `;
 
@@ -68,7 +70,7 @@ const Tab = styled.div<{ isActive: boolean }>`
   font-size: 400;
   border-radius: 10px;
   background-color: rgba(0, 0, 0, 0.5);
-  color: ${(props) => (props.isActive ? props.theme.accentColor : props.theme.textColor)};
+  color: ${props => (props.isActive ? props.theme.accentColor : props.theme.textColor)};
 
   a {
     display: block;
@@ -140,36 +142,41 @@ interface PriceData {
 }
 
 function Coin() {
-  const [loading, setLoading] = useState(true);
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
-  const [info, setInfo] = useState<InfoData>();
-  const [priceInfo, setPriceInfo] = useState<PriceData>();
   const priceMatch = useRouteMatch("/:coinId/price"); // 현재 링크가 /:coinId/price 에 위치해 있는지 알려준다.
   const chartMatch = useRouteMatch("/:coinId/chart");
 
-  useEffect(() => {
-    (async () => {
-      const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)).json();
-      const priceData = await (await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)).json();
+  // const [loading, setLoading] = useState(true);
+  // const [info, setInfo] = useState<InfoData>();
+  // const [priceInfo, setPriceInfo] = useState<PriceData>();
 
-      setInfo(infoData);
-      setPriceInfo(priceData);
-      setLoading(false);
+  // useEffect(() => {
+  //   (async () => {
+  //     const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)).json();
+  //     const priceData = await (await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)).json();
+  //     setInfo(infoData);
+  //     setPriceInfo(priceData);
+  //     setLoading(false);
 
-      // GET ++ data json keys, value types ++
-      // 1. console.log(infoData)
-      // 2. 콘솔 출력문 우클릭 > 전역 변수로 Object 저장 > temp1로 자동 저장됨
-      // 3. Objet.keys(temp1).join(0) > key값들 string으로 합쳐짐
-      // 4. Object.values(temp1).map(v => typeof v).join() > value의 type값들 string으로 합쳐짐
-      // 5. interface로 가져와서 붙여넣기
-    })();
-  }, []);
+  //     // GET ++ data json keys, value types ++
+  //     // 1. console.log(infoData)
+  //     // 2. 콘솔 출력문 우클릭 > 전역 변수로 Object 저장 > temp1로 자동 저장됨
+  //     // 3. Objet.keys(temp1).join(0) > key값들 string으로 합쳐짐
+  //     // 4. Object.values(temp1).map(v => typeof v).join() > value의 type값들 string으로 합쳐짐
+  //     // 5. interface로 가져와서 붙여넣기
+  //   })();
+  // }, []);
+
+  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId));
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(["tickers", coinId], () => fetchCoinTickers(coinId));
+
+  const loading = infoLoading || tickersLoading;
 
   return (
     <Container>
       <Header>
-        <Title>{state?.name ? state.name : loading ? "Loading..." : info?.name}</Title>
+        <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
@@ -178,26 +185,26 @@ function Coin() {
           <Overview>
             <OverviewItem>
               <span>rank:</span>
-              <span>{info?.rank}</span>
+              <span>{infoData?.rank}</span>
             </OverviewItem>
             <OverviewItem>
               <span>symbol:</span>
-              <span>{info?.symbol}</span>
+              <span>{infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
               <span>open source:</span>
-              <span>{info?.open_source ? "Yes" : "No"}</span>
+              <span>{infoData?.open_source ? "Yes" : "No"}</span>
             </OverviewItem>
           </Overview>
-          <Description>{info?.description}</Description>
+          <Description>{infoData?.description}</Description>
           <Overview>
             <OverviewItem>
               <span>total suply:</span>
-              <span>{priceInfo?.total_supply}</span>
+              <span>{tickersData?.total_supply}</span>
             </OverviewItem>
             <OverviewItem>
               <span>max supply:</span>
-              <span>{priceInfo?.max_supply}</span>
+              <span>{tickersData?.max_supply}</span>
             </OverviewItem>
           </Overview>
 
