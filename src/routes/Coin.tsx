@@ -170,6 +170,8 @@ function Coin() {
   const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId));
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(["tickers", coinId], () => fetchCoinTickers(coinId));
 
+  // { isLoading: myLoadingName, data: myDataName } = useQuery<dataInterface>(["myKeyName", key], () => fetchFunction(argument_A))
+
   const loading = infoLoading || tickersLoading;
 
   return (

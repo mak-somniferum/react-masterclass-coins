@@ -78,6 +78,8 @@ function Coins() {
 
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
 
+  // { isLoading, data } = useQuery<dataInterface>("keyName", fetchFunction)
+
   // 1. fetchCoins가 fetch 중(로딩 중)일때  useQuery는 isLoading을 true로 보여줌.
   // 2. fetchCoins가 끝나면 useQuery는 isLoading을 false로 하고, data에 패치한 데이터(json)를 집어넣음.
   // 3. 새로고침해도 Loding이 표시 되지 않는데, 이유는 useQuery가 캐시에 데이터를 저장했기 때문임.
