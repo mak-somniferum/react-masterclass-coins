@@ -9,20 +9,14 @@ interface IHistorical {
   low: string;
   close: string;
   volume: string;
-  market_cap: number;
+  market_cap: string;
 }
 interface ChartProps {
   coinId: string;
 }
 
 function Chart({ coinId }: ChartProps) {
-  const { isLoading, data } = useQuery<IHistorical[]>(
-    ["ohlcv", coinId],
-    () => fetchCoinHistory(coinId),
-    {
-      refetchInterval: 10000,
-    }
-  );
+  const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () => fetchCoinHistory(coinId));
 
   return (
     <div>
@@ -30,30 +24,30 @@ function Chart({ coinId }: ChartProps) {
         "Loading chart..."
       ) : (
         <ApexChart
-          type="line"
+          type="candlestick"
           series={[
             {
               name: "Price",
-              data: data?.map((price) => Number(price.close)) ?? [],
+              data:
+                data?.map(priceInfo => {
+                  const obj = {
+                    x: new Date(priceInfo.time_close * 1000),
+                    y: [Number(priceInfo.open), Number(priceInfo.high), Number(priceInfo.low), Number(priceInfo.close)],
+                  };
+                  return obj;
+                }) ?? [],
             },
           ]}
           options={{
             theme: {
               mode: "dark",
             },
-            stroke: {
-              curve: "smooth",
-              width: 3,
-            },
             yaxis: {
               show: false,
             },
             xaxis: {
               type: "datetime",
-              categories: data?.map((time) => time.time_close * 1000),
-              labels: { show: false },
-              axisTicks: { show: false },
-              axisBorder: { show: false },
+              categories: data?.map(time => time.time_close * 1000),
             },
             chart: {
               toolbar: { show: false },
@@ -61,15 +55,7 @@ function Chart({ coinId }: ChartProps) {
               height: 300,
               background: "transparent",
             },
-            grid: {
-              show: false,
-            },
-            fill: {
-              type: "gradient",
-              gradient: { gradientToColors: ["#0be881"], stops: [0, 100] },
-            },
-            colors: ["#0fbcf9"],
-            tooltip: { y: { formatter: (value) => `$ ${value.toFixed(1)}` } },
+            tooltip: { y: { formatter: value => `$ ${value.toFixed(3)}` } },
           }}
         />
       )}

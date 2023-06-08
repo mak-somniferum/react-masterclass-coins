@@ -1,11 +1,4 @@
-import {
-  Switch,
-  Route,
-  useLocation,
-  useParams,
-  Link,
-  useRouteMatch,
-} from "react-router-dom";
+import { Switch, Route, useLocation, useParams, Link, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import Price from "./Price";
 import Chart from "./Chart";
@@ -27,7 +20,7 @@ const Header = styled.header`
 `;
 
 const Title = styled.h1`
-  color: ${(props) => props.theme.accentColor};
+  color: ${props => props.theme.accentColor};
   font-size: 48px;
 `;
 
@@ -77,8 +70,7 @@ const Tab = styled.div<{ isActive: boolean }>`
   font-size: 400;
   border-radius: 10px;
   background-color: rgba(0, 0, 0, 0.5);
-  color: ${(props) =>
-    props.isActive ? props.theme.accentColor : props.theme.textColor};
+  color: ${props => (props.isActive ? props.theme.accentColor : props.theme.textColor)};
 
   a {
     display: block;
@@ -152,39 +144,21 @@ interface PriceData {
 function Coin() {
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
-  const priceMatch = useRouteMatch("/:coinId/price"); // 현재 링크가 /:coinId/price 에 위치해 있는지 알려준다.
+  const priceMatch = useRouteMatch("/:coinId/price");
   const chartMatch = useRouteMatch("/:coinId/chart");
 
-  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
-    ["info", coinId],
-    () => fetchCoinInfo(coinId)
-  );
-  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
-    ["tickers", coinId],
-    () => fetchCoinTickers(coinId),
-    {
-      refetchInterval: 5000,
-    }
-  );
-
-  // { isLoading: myLoadingName, data: myDataName } = useQuery<dataInterface>(["myKeyName", key], () => fetchFunction(argument_A))
+  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId));
+  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(["tickers", coinId], () => fetchCoinTickers(coinId), { refetchInterval: 5000 });
 
   const loading = infoLoading || tickersLoading;
 
   return (
     <Container>
       <Helmet>
-        <title>
-          {
-            // helmet은 페이지의 header로 적용된다.
-            state?.name ? state.name : loading ? "Loading..." : infoData?.name
-          }
-        </title>
+        <title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</title>
       </Helmet>
       <Header>
-        <Title>
-          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
-        </Title>
+        <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
