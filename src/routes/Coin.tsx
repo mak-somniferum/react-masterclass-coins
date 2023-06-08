@@ -11,6 +11,7 @@ import Price from "./Price";
 import Chart from "./Chart";
 import { useQuery } from "react-query";
 import { fetchCoinInfo, fetchCoinTickers } from "./api";
+import { Helmet } from "react-helmet";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -154,34 +155,16 @@ function Coin() {
   const priceMatch = useRouteMatch("/:coinId/price"); // 현재 링크가 /:coinId/price 에 위치해 있는지 알려준다.
   const chartMatch = useRouteMatch("/:coinId/chart");
 
-  // const [loading, setLoading] = useState(true);
-  // const [info, setInfo] = useState<InfoData>();
-  // const [priceInfo, setPriceInfo] = useState<PriceData>();
-
-  // useEffect(() => {
-  //   (async () => {
-  //     const infoData = await (await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)).json();
-  //     const priceData = await (await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)).json();
-  //     setInfo(infoData);
-  //     setPriceInfo(priceData);
-  //     setLoading(false);
-
-  //     // GET ++ data json keys, value types ++
-  //     // 1. console.log(infoData)
-  //     // 2. 콘솔 출력문 우클릭 > 전역 변수로 Object 저장 > temp1로 자동 저장됨
-  //     // 3. Objet.keys(temp1).join(0) > key값들 string으로 합쳐짐
-  //     // 4. Object.values(temp1).map(v => typeof v).join() > value의 type값들 string으로 합쳐짐
-  //     // 5. interface로 가져와서 붙여넣기
-  //   })();
-  // }, []);
-
   const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(
     ["info", coinId],
     () => fetchCoinInfo(coinId)
   );
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
     ["tickers", coinId],
-    () => fetchCoinTickers(coinId)
+    () => fetchCoinTickers(coinId),
+    {
+      refetchInterval: 5000,
+    }
   );
 
   // { isLoading: myLoadingName, data: myDataName } = useQuery<dataInterface>(["myKeyName", key], () => fetchFunction(argument_A))
@@ -190,6 +173,14 @@ function Coin() {
 
   return (
     <Container>
+      <Helmet>
+        <title>
+          {
+            // helmet은 페이지의 header로 적용된다.
+            state?.name ? state.name : loading ? "Loading..." : infoData?.name
+          }
+        </title>
+      </Helmet>
       <Header>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
@@ -209,8 +200,8 @@ function Coin() {
               <span>{infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>open source:</span>
-              <span>{infoData?.open_source ? "Yes" : "No"}</span>
+              <span>price:</span>
+              <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
