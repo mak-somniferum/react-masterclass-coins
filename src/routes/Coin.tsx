@@ -3,8 +3,10 @@ import styled from "styled-components";
 import Price from "./Price";
 import Chart from "./Chart";
 import { useQuery } from "react-query";
-import { fetchCoinInfo, fetchCoinTickers } from "./api";
-import { Helmet } from "react-helmet";
+import { fetchCoinInfo, fetchCoinPrice } from "./api";
+import { Helmet } from "react-helmet-async";
+import { ICoinInfo, IPriceInfo } from "./interface";
+import OrderBook from "./OrderBook";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -17,6 +19,21 @@ const Header = styled.header`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+`;
+
+const GoBack = styled.div`
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0;
+
+  a {
+    color: white;
+  }
 `;
 
 const Title = styled.h1`
@@ -85,80 +102,33 @@ interface RouteParams {
 interface RouteState {
   name: string;
 }
-interface InfoData {
-  id: string;
-  name: string;
-  symbol: string;
-  rank: number;
-  is_new: boolean;
-  is_active: boolean;
-  type: string;
-  logo: string;
-  description: string;
-  message: string;
-  open_source: boolean;
-  started_at: string;
-  development_status: string;
-  hardware_wallet: boolean;
-  proof_type: string;
-  org_structure: string;
-  hash_algorithm: string;
-  first_data_at: string;
-  last_data_at: string;
-}
-
-interface PriceData {
-  id: string;
-  name: string;
-  symbol: string;
-  rank: number;
-  circulating_supply: number;
-  total_supply: number;
-  max_supply: number;
-  beta_value: number;
-  first_data_at: string;
-  last_updated: string;
-  quotes: {
-    USD: {
-      ath_date: string;
-      ath_price: number;
-      market_cap: number;
-      market_cap_change_24h: number;
-      percent_change_1h: number;
-      percent_change_1y: number;
-      percent_change_6h: number;
-      percent_change_7d: number;
-      percent_change_12h: number;
-      percent_change_15m: number;
-      percent_change_24h: number;
-      percent_change_30d: number;
-      percent_change_30m: number;
-      percent_from_price_ath: number;
-      price: number;
-      volume_24h: number;
-      volume_24h_change_24h: number;
-    };
-  };
-}
 
 function Coin() {
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
-  const priceMatch = useRouteMatch("/:coinId/price");
-  const chartMatch = useRouteMatch("/:coinId/chart");
+  const orderBookMatch = useRouteMatch("/:coinId/OrderBook");
+  const chartMatch = useRouteMatch("/:coinId/Chart");
 
-  const { isLoading: infoLoading, data: infoData } = useQuery<InfoData>(["info", coinId], () => fetchCoinInfo(coinId));
-  const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(["tickers", coinId], () => fetchCoinTickers(coinId), { refetchInterval: 5000 });
-
-  const loading = infoLoading || tickersLoading;
+  const { isLoading: infoLoading, data: infoDataList } = useQuery<ICoinInfo>(["info", coinId], () => fetchCoinInfo(coinId), {
+    refetchInterval: 1000,
+  });
+  const { isLoading: priceLoading, data: priceDataList } = useQuery<IPriceInfo>(["price", coinId], () => fetchCoinPrice(coinId), {
+    refetchInterval: 1000,
+  });
+  const infoData = infoDataList?.Data[coinId];
+  const priceData = priceDataList?.RAW[coinId].USD;
+  const loading = infoLoading || priceLoading;
 
   return (
     <Container>
       <Helmet>
-        <title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</title>
+        <title>{state?.name ? state.name : loading ? "Loading..." : `${infoData?.CoinName}`}</title>
       </Helmet>
       <Header>
-        <Title>{state?.name ? state.name : loading ? "Loading..." : infoData?.name}</Title>
+        <GoBack>
+          <Link to="/">Back</Link>
+        </GoBack>
+        <Title>{state?.name ? state.name : loading ? "Loading..." : `${infoData?.CoinName}`}</Title>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
@@ -166,47 +136,64 @@ function Coin() {
         <>
           <Overview>
             <OverviewItem>
-              <span>rank:</span>
-              <span>{infoData?.rank}</span>
+              <span>Rank</span>
+              <span>{infoData?.SortOrder}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>symbol:</span>
-              <span>{infoData?.symbol}</span>
+              <span>Symbol</span>
+              <span>{infoData?.Name}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>price:</span>
-              <span>${tickersData?.quotes.USD.price.toFixed(3)}</span>
+              <span>Price</span>
+              <span>${Math.ceil(Number(priceData?.PRICE))}</span>
             </OverviewItem>
           </Overview>
-          <Description>{infoData?.description}</Description>
+
           <Overview>
             <OverviewItem>
-              <span>total suply:</span>
-              <span>{tickersData?.total_supply}</span>
+              <span>Today High</span>
+              <span>{Math.ceil(Number(priceData?.HIGHDAY))}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>max supply:</span>
-              <span>{tickersData?.max_supply}</span>
+              <span>Today Low</span>
+              <span>{Math.ceil(Number(priceData?.LOWDAY))}</span>
+            </OverviewItem>
+          </Overview>
+
+          <Overview>
+            <OverviewItem>
+              <span>Market Cap</span>
+              <span>{Math.ceil(Number(priceData?.MKTCAP))}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Circulating Supply</span>
+              <span>{infoData?.CirculatingSupply}</span>
+            </OverviewItem>
+            <OverviewItem>
+              <span>Max Supply</span>
+              <span>{Math.ceil(Number(infoData?.MaxSupply))}</span>
             </OverviewItem>
           </Overview>
 
           <Tabs>
             <Tab isActive={chartMatch !== null}>
-              <Link to={`/${coinId}/chart`}>Chart</Link>
+              <Link to={`/${coinId}/Chart`}>Chart</Link>
             </Tab>
-            <Tab isActive={priceMatch !== null}>
-              <Link to={`/${coinId}/price`}>Price</Link>
+            <Tab isActive={orderBookMatch !== null}>
+              <Link to={`/${coinId}/OrderBook`}>Order Book</Link>
             </Tab>
           </Tabs>
 
           <Switch>
-            <Route path={`/${coinId}/price`}>
-              <Price />
-            </Route>
-            <Route path={`/${coinId}/chart`}>
+            <Route path={`/${coinId}/Chart`}>
               <Chart coinId={coinId} />
             </Route>
+            <Route path={`/${coinId}/OrderBook`}>
+              <OrderBook coinId={coinId} />
+            </Route>
           </Switch>
+
+          <Description>{infoData?.Description}</Description>
         </>
       )}
     </Container>

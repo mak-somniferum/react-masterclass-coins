@@ -1,17 +1,18 @@
-const BASE_URL = `https://api.coinpaprika.com/v1`;
+const BASE_URL = `https://min-api.cryptocompare.com/data`;
+const API_KEY = `f850268ef07b85f48ec70a8393eb0cbd8b9f533e38cb8d2be75ab625987e428a`;
 
 export function fetchCoins() {
-  return fetch(`${BASE_URL}/coins`).then(response => response.json());
+  return fetch(`${BASE_URL}/top/mktcapfull?limit=100&tsym=USD&api_key=${API_KEY}`).then(response => response.json());
 }
 
 export function fetchCoinInfo(coinId: string) {
-  return fetch(`${BASE_URL}/coins/${coinId}`).then(response => response.json());
+  return fetch(`${BASE_URL}/all/coinlist?fsym=${coinId}`).then(response => response.json());
 }
 
-export function fetchCoinTickers(coinId: string) {
-  return fetch(`${BASE_URL}/tickers/${coinId}`).then(response => response.json());
+export function fetchCoinPrice(coinId: string) {
+  return fetch(`${BASE_URL}/pricemultifull?fsyms=${coinId}&tsyms=USD`).then(response => response.json());
 }
 
 export function fetchCoinHistory(coinId: string) {
-  return fetch(`https://ohlcv-api.nomadcoders.workers.dev?coinId=${coinId}`).then(response => response.json());
+  return fetch(`${BASE_URL}/v2/histoday?fsym=${coinId}&tsym=USD`).then(response => response.json());
 }

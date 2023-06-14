@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Coins from "./Coins";
 import Coin from "./Coin";
+
 function Router() {
   return (
     <BrowserRouter>
@@ -8,7 +9,7 @@ function Router() {
         <Route path="/:coinId">
           <Coin />
         </Route>
-        <Route path="/">
+        <Route exact path="/">
           <Coins />
         </Route>
       </Switch>

@@ -1,22 +1,13 @@
 import { useQuery } from "react-query";
 import { fetchCoinHistory } from "./api";
 import ApexChart from "react-apexcharts";
-interface IHistorical {
-  time_open: number;
-  time_close: number;
-  open: string;
-  high: string;
-  low: string;
-  close: string;
-  volume: string;
-  market_cap: string;
-}
+import { IHistorical } from "./interface";
 interface ChartProps {
   coinId: string;
 }
 
 function Chart({ coinId }: ChartProps) {
-  const { isLoading, data } = useQuery<IHistorical[]>(["ohlcv", coinId], () => fetchCoinHistory(coinId));
+  const { isLoading, data } = useQuery<IHistorical>(["ohlcv", coinId], () => fetchCoinHistory(coinId));
 
   return (
     <div>
@@ -29,9 +20,9 @@ function Chart({ coinId }: ChartProps) {
             {
               name: "Price",
               data:
-                data?.map(priceInfo => {
+                data?.Data.Data.map(priceInfo => {
                   const obj = {
-                    x: new Date(priceInfo.time_close * 1000),
+                    x: new Date(priceInfo.time * 1000),
                     y: [Number(priceInfo.open), Number(priceInfo.high), Number(priceInfo.low), Number(priceInfo.close)],
                   };
                   return obj;
@@ -47,7 +38,7 @@ function Chart({ coinId }: ChartProps) {
             },
             xaxis: {
               type: "datetime",
-              categories: data?.map(time => time.time_close * 1000),
+              categories: data?.Data.Data.map(time => time.time * 1000),
             },
             chart: {
               toolbar: { show: false },
