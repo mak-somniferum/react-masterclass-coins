@@ -13,6 +13,14 @@ export function fetchCoinPrice(coinId: string) {
   return fetch(`${BASE_URL}/pricemultifull?fsyms=${coinId}&tsyms=USD`).then(response => response.json());
 }
 
-export function fetchCoinHistory(coinId: string) {
+export function fetchHistoDay(coinId: string) {
   return fetch(`${BASE_URL}/v2/histoday?fsym=${coinId}&tsym=USD`).then(response => response.json());
+}
+
+export function fetchHistoHour(coinId: string) {
+  return fetch(`${BASE_URL}/v2/histohour?fsym=${coinId}&tsym=USD`).then(response => response.json());
+}
+
+export function fetchHistoMinute(coinId: string) {
+  return fetch(`${BASE_URL}/v2/histominute?fsym=${coinId}&tsym=USD`).then(response => response.json());
 }

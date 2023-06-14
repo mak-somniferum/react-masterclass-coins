@@ -1,56 +1,128 @@
-import { useQuery } from "react-query";
-import { fetchCoinHistory } from "./api";
-import ApexChart from "react-apexcharts";
+import { useState } from "react";
+import { useQueries, useQuery } from "react-query";
+import { fetchHistoDay, fetchHistoHour, fetchHistoMinute } from "./api";
 import { IHistorical } from "./interface";
-interface ChartProps {
+import CandlestickChart from "../components/chart/CandlestickChart";
+import styled from "styled-components";
+import { RiLineChartLine } from "react-icons/ri";
+import { TbChartCandle } from "react-icons/tb";
+import LineChart from "../components/chart/LineChart";
+
+const ChartBtns = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+
+  > div {
+    display: flex;
+    gap: 5px;
+  }
+`;
+
+const ChartTimeBtn = styled.button<IBtnProps>`
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+  color: ${props => (props.isActive ? props.theme.accentColor : props.theme.textColor)};
+  border: 0;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+
+  &:hover {
+    background-color: #000;
+  }
+`;
+
+const ChartTypeBtn = styled(ChartTimeBtn)`
+  font-size: 16px;
+`;
+interface IProps {
   coinId: string;
 }
 
-function Chart({ coinId }: ChartProps) {
-  const { isLoading, data } = useQuery<IHistorical>(["ohlcv", coinId], () => fetchCoinHistory(coinId));
+interface IBtnProps {
+  isActive: boolean;
+  value: string;
+}
+
+function Chart({ coinId }: IProps) {
+  const [requestedChart, setRequestedChart] = useState({ type: "candle", time: "day" });
+
+  const result = useQueries([
+    {
+      queryKey: ["histoDay", coinId],
+      queryFn: () => fetchHistoDay(coinId),
+    },
+    {
+      queryKey: ["histoHour", coinId],
+      queryFn: () => fetchHistoHour(coinId),
+    },
+    {
+      queryKey: ["histoMinute", coinId],
+      queryFn: () => fetchHistoMinute(coinId),
+    },
+  ]);
+
+  const chartData = requestedChart.time === "day" ? result[0] : requestedChart.time === "hour" ? result[1] : requestedChart.time === "minute" ? result[2] : undefined;
+
+  const loading = result.every(res => res.status === "loading");
+  const error = result.every(res => res.status === "error");
+  const success = result.every(res => res.status === "success");
+
+  const changeType = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const {
+      currentTarget: { value },
+    } = event;
+    setRequestedChart(state => {
+      return { ...state, type: value };
+    });
+  };
+
+  const changeTime = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const {
+      currentTarget: { value },
+    } = event;
+    setRequestedChart(state => {
+      return { ...state, time: value };
+    });
+  };
 
   return (
-    <div>
-      {isLoading ? (
-        "Loading chart..."
-      ) : (
-        <ApexChart
-          type="candlestick"
-          series={[
-            {
-              name: "Price",
-              data:
-                data?.Data.Data.map(priceInfo => {
-                  const obj = {
-                    x: new Date(priceInfo.time * 1000),
-                    y: [Number(priceInfo.open), Number(priceInfo.high), Number(priceInfo.low), Number(priceInfo.close)],
-                  };
-                  return obj;
-                }) ?? [],
-            },
-          ]}
-          options={{
-            theme: {
-              mode: "dark",
-            },
-            yaxis: {
-              show: false,
-            },
-            xaxis: {
-              type: "datetime",
-              categories: data?.Data.Data.map(time => time.time * 1000),
-            },
-            chart: {
-              toolbar: { show: false },
-              width: 500,
-              height: 300,
-              background: "transparent",
-            },
-            tooltip: { y: { formatter: value => `$ ${value.toFixed(3)}` } },
-          }}
-        />
-      )}
-    </div>
+    <>
+      {loading
+        ? "Loading chart..."
+        : error
+        ? "Error"
+        : success && (
+            <div>
+              <ChartBtns>
+                <div>
+                  <ChartTypeBtn isActive={requestedChart.type === "candle"} value="candle" onClick={changeType}>
+                    <TbChartCandle />
+                  </ChartTypeBtn>
+                  <ChartTypeBtn isActive={requestedChart.type === "line"} value="line" onClick={changeType}>
+                    <RiLineChartLine />
+                  </ChartTypeBtn>
+                </div>
+
+                <div>
+                  <ChartTimeBtn isActive={requestedChart.time === "minute"} value="minute" onClick={changeTime}>
+                    M
+                  </ChartTimeBtn>
+                  <ChartTimeBtn isActive={requestedChart.time === "hour"} value="hour" onClick={changeTime}>
+                    H
+                  </ChartTimeBtn>
+                  <ChartTimeBtn isActive={requestedChart.time === "day"} value="day" onClick={changeTime}>
+                    D
+                  </ChartTimeBtn>
+                </div>
+              </ChartBtns>
+
+              {requestedChart.type === "candle" ? <CandlestickChart data={chartData?.data} /> : requestedChart.type === "line" && <LineChart data={chartData?.data} />}
+            </div>
+          )}
+    </>
   );
 }
 

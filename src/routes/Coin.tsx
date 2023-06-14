@@ -89,6 +89,10 @@ const Tab = styled.div<{ isActive: boolean }>`
   background-color: rgba(0, 0, 0, 0.5);
   color: ${props => (props.isActive ? props.theme.accentColor : props.theme.textColor)};
 
+  &:hover {
+    background-color: #000;
+  }
+
   a {
     display: block;
     padding: 10px;
@@ -109,12 +113,8 @@ function Coin() {
   const orderBookMatch = useRouteMatch("/:coinId/OrderBook");
   const chartMatch = useRouteMatch("/:coinId/Chart");
 
-  const { isLoading: infoLoading, data: infoDataList } = useQuery<ICoinInfo>(["info", coinId], () => fetchCoinInfo(coinId), {
-    refetchInterval: 1000,
-  });
-  const { isLoading: priceLoading, data: priceDataList } = useQuery<IPriceInfo>(["price", coinId], () => fetchCoinPrice(coinId), {
-    refetchInterval: 1000,
-  });
+  const { isLoading: infoLoading, data: infoDataList } = useQuery<ICoinInfo>(["info", coinId], () => fetchCoinInfo(coinId));
+  const { isLoading: priceLoading, data: priceDataList } = useQuery<IPriceInfo>(["price", coinId], () => fetchCoinPrice(coinId));
   const infoData = infoDataList?.Data[coinId];
   const priceData = priceDataList?.RAW[coinId].USD;
   const loading = infoLoading || priceLoading;
