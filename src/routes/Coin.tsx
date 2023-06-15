@@ -1,12 +1,11 @@
 import { Switch, Route, useLocation, useParams, Link, useRouteMatch } from "react-router-dom";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import Chart from "./Chart";
 import { useQuery } from "react-query";
 import { fetchCoinInfo, fetchCoinPrice } from "./api";
 import { Helmet } from "react-helmet-async";
 import { ICoinInfo, IPriceInfo } from "./interface";
 import { HiHome } from "react-icons/hi";
-import { TbLoaderQuarter } from "react-icons/tb";
 import OrderBook from "./OrderBook";
 import Loader from "../components/Loader";
 
