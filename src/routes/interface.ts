@@ -1,3 +1,10 @@
+export interface ICommon {
+  Message: string;
+  Type: number;
+  HasWarning: boolean;
+  RateLimit: object;
+}
+
 export interface IData {
   CoinInfo: {
     Id: string;
@@ -78,25 +85,17 @@ export interface IData {
   };
 }
 
-export interface ICoin {
-  Message: string;
-  Type: number;
+export interface ICoin extends ICommon {
   MetaData: object;
   SponsoredData: [];
   Data: IData[];
-  RateLimit: object;
-  HasWarning: boolean;
 }
 
-export interface ICoinInfo {
+export interface ICoinInfo extends ICommon {
   Response: string;
-  Message: string;
   Data: {
     [key: string]: ICoinData;
   };
-  RateLimit: object;
-  HasWarning: boolean;
-  Type: number;
 }
 
 export interface ICoinData {
@@ -200,12 +199,8 @@ export interface IPriceData {
   IMAGEURL: string;
 }
 
-export interface IHistorical {
+export interface IHistorical extends ICommon {
   Response: string;
-  Message: string;
-  HasWarning: boolean;
-  Type: number;
-  RateLimit: Object;
   Data: {
     Aggregated: boolean;
     TimeFrom: number;
@@ -224,4 +219,27 @@ export interface IHistoricalData {
   close: number;
   conversionType: string;
   conversionSymbol: string;
+}
+
+export interface IOrderBook extends ICommon {
+  Response: string;
+  Data: {
+    TYPE: string;
+    CCSEQ: number;
+    M: string;
+    FSYM: string;
+    TSYM: string;
+    BID: [
+      {
+        P: number;
+        Q: number;
+      }
+    ];
+    ASK: [
+      {
+        P: number;
+        Q: number;
+      }
+    ];
+  };
 }

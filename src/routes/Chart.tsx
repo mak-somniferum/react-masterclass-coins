@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { useQueries, useQuery } from "react-query";
+import { useQueries } from "react-query";
 import { fetchHistoDay, fetchHistoHour, fetchHistoMinute } from "./api";
-import { IHistorical } from "./interface";
 import CandlestickChart from "../components/chart/CandlestickChart";
 import styled from "styled-components";
 import { RiLineChartLine } from "react-icons/ri";

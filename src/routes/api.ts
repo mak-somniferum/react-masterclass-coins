@@ -24,3 +24,7 @@ export function fetchHistoHour(coinId: string) {
 export function fetchHistoMinute(coinId: string) {
   return fetch(`${BASE_URL}/v2/histominute?fsym=${coinId}&tsym=USD`).then(response => response.json());
 }
+
+export function fetchOrderBook(coinId: string) {
+  return fetch(`${BASE_URL}/v2/ob/l2/snapshot?api_key=${API_KEY}&fsym=${coinId}&tsym=USDT`).then(Response => Response.json());
+}
