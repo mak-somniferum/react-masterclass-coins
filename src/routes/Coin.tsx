@@ -112,8 +112,12 @@ function Coin() {
   const orderBookMatch = useRouteMatch("/:coinId/OrderBook");
   const chartMatch = useRouteMatch("/:coinId/Chart");
 
-  const { isLoading: infoLoading, data: infoDataList } = useQuery<ICoinInfo>(["info", coinId], () => fetchCoinInfo(coinId));
-  const { isLoading: priceLoading, data: priceDataList } = useQuery<IPriceInfo>(["price", coinId], () => fetchCoinPrice(coinId));
+  const { isLoading: infoLoading, data: infoDataList } = useQuery<ICoinInfo>(["info", coinId], () => fetchCoinInfo(coinId), {
+    refetchInterval: 10000,
+  });
+  const { isLoading: priceLoading, data: priceDataList } = useQuery<IPriceInfo>(["price", coinId], () => fetchCoinPrice(coinId), {
+    refetchInterval: 10000,
+  });
   const infoData = infoDataList?.Data[coinId];
   const priceData = priceDataList?.RAW[coinId].USD;
   const loading = infoLoading || priceLoading;
