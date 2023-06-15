@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { RiLineChartLine } from "react-icons/ri";
 import { TbChartCandle } from "react-icons/tb";
 import LineChart from "../components/chart/LineChart";
+import Loader from "../components/Loader";
 
 const ChartBtns = styled.div`
   display: flex;
@@ -90,7 +91,7 @@ function Chart({ coinId }: IProps) {
   return (
     <>
       {loading
-        ? "Loading chart..."
+        ? <Loader />
         : error
         ? "Error"
         : success && (

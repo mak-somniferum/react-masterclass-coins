@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { fetchOrderBook } from "./api";
 import { IOrderBook } from "./interface";
 import styled from "styled-components";
+import Loader from "../components/Loader";
 
 const Container = styled.div`
   display: flex;
@@ -96,7 +97,7 @@ function OrderBook({ coinId }: OrderBookProps) {
   return (
     <>
       {isLoading ? (
-        "Loading Order Book..."
+        <Loader />
       ) : (
         <div>
           <Info>Market: {data?.Data.M} &#124; Cache duration: 10s</Info>

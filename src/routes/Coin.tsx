@@ -1,11 +1,14 @@
 import { Switch, Route, useLocation, useParams, Link, useRouteMatch } from "react-router-dom";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Chart from "./Chart";
 import { useQuery } from "react-query";
 import { fetchCoinInfo, fetchCoinPrice } from "./api";
 import { Helmet } from "react-helmet-async";
 import { ICoinInfo, IPriceInfo } from "./interface";
+import { HiHome } from "react-icons/hi";
+import { TbLoaderQuarter } from "react-icons/tb";
 import OrderBook from "./OrderBook";
+import Loader from "../components/Loader";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -22,16 +25,20 @@ const Header = styled.header`
 `;
 
 const GoBack = styled.div`
-  width: 50px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   position: absolute;
   left: 0;
 
   a {
-    color: white;
+    display: flex;
+    font-size: 1.4rem;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+
+    &:hover {
+      background-color: #000;
+      color: ${props => props.theme.accentColor};
+    }
   }
 `;
 
@@ -40,17 +47,13 @@ const Title = styled.h1`
   font-size: 48px;
 `;
 
-const Loader = styled.span`
-  display: block;
-  text-align: center;
-`;
-
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
   border-radius: 10px;
   background-color: rgba(0, 0, 0, 0.5);
   padding: 10px 20px;
+  margin: 10px 0;
 `;
 
 const OverviewItem = styled.div`
@@ -68,8 +71,18 @@ const OverviewItem = styled.div`
   }
 `;
 
-const Description = styled.p`
+const Description = styled.div`
   margin: 20px 0;
+
+  h5 {
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  p {
+    font-size: 12px;
+    line-height: 1.4;
+  }
 `;
 
 const Tabs = styled.div`
@@ -129,12 +142,14 @@ function Coin() {
       </Helmet>
       <Header>
         <GoBack>
-          <Link to="/">Back</Link>
+          <Link to="/">
+            <HiHome />
+          </Link>
         </GoBack>
         <Title>{state?.name ? state.name : loading ? "Loading..." : `${infoData?.CoinName}`}</Title>
       </Header>
       {loading ? (
-        <Loader>Loading...</Loader>
+        <Loader />
       ) : (
         <>
           <Overview>
@@ -174,7 +189,7 @@ function Coin() {
             </OverviewItem>
             <OverviewItem>
               <span>Max Supply</span>
-              <span>{Math.ceil(Number(infoData?.MaxSupply))}</span>
+              <span>{Math.ceil(Number(infoData?.MaxSupply)) === -1 ? "N/A" : Math.ceil(Number(infoData?.MaxSupply))}</span>
             </OverviewItem>
           </Overview>
 
@@ -196,7 +211,10 @@ function Coin() {
             </Route>
           </Switch>
 
-          <Description>{infoData?.Description}</Description>
+          <Description>
+            <h5>What is {infoData?.CoinName}?</h5>
+            <p>{infoData?.Description}</p>
+          </Description>
         </>
       )}
     </Container>

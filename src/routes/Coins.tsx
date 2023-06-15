@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { fetchCoins } from "./api";
 import { Helmet } from "react-helmet-async";
 import { ICoin } from "./interface";
+import Loader from "../components/Loader";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -45,11 +46,6 @@ const Title = styled.h1`
   font-size: 48px;
 `;
 
-const Loader = styled.span`
-  display: block;
-  text-align: center;
-`;
-
 const Img = styled.img`
   width: 35px;
   margin-right: 10px;
@@ -67,7 +63,7 @@ function Coins() {
         <Title>Coins</Title>
       </Header>
       {isLoading ? (
-        <Loader>Loading...</Loader>
+        <Loader />
       ) : (
         <CoinList>
           {data?.Data.map(coin => (

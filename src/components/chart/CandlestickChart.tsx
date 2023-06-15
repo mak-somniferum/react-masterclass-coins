@@ -40,7 +40,7 @@ function CandlestickChart({ data }: IProps) {
           categories: datas?.map(time => time.time * 1000),
         },
         chart: {
-          toolbar: { show: false },
+          toolbar: { show: true },
           width: 500,
           height: 300,
           background: "transparent",
