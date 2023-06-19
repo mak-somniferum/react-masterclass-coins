@@ -3,9 +3,10 @@ import { IHistorical } from "../../routes/interface";
 
 interface IProps {
   data: IHistorical | undefined;
+  isDark: boolean;
 }
 
-function LineChart({ data }: IProps) {
+function LineChart({ data, isDark }: IProps) {
   const datas = data?.Data.Data;
   return (
     <ApexChart
@@ -18,7 +19,7 @@ function LineChart({ data }: IProps) {
       ]}
       options={{
         theme: {
-          mode: "dark",
+          mode: isDark ? "dark" : "light",
         },
         yaxis: {
           show: true,

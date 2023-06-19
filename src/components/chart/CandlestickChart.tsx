@@ -3,9 +3,10 @@ import { IHistorical } from "../../routes/interface";
 
 interface IProps {
   data: IHistorical | undefined;
+  isDark: boolean;
 }
 
-function CandlestickChart({ data }: IProps) {
+function CandlestickChart({ data, isDark }: IProps) {
   const datas = data?.Data.Data;
   return (
     <ApexChart
@@ -25,7 +26,7 @@ function CandlestickChart({ data }: IProps) {
       ]}
       options={{
         theme: {
-          mode: "dark",
+          mode: isDark ? "dark" : "light",
         },
         yaxis: {
           show: true,

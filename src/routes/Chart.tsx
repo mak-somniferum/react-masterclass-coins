@@ -37,8 +37,9 @@ const ChartTimeBtn = styled.button<IBtnProps>`
 const ChartTypeBtn = styled(ChartTimeBtn)`
   font-size: 16px;
 `;
-interface IProps {
+interface IChartProps {
   coinId: string;
+  isDark: boolean;
 }
 
 interface IBtnProps {
@@ -46,7 +47,7 @@ interface IBtnProps {
   value: string;
 }
 
-function Chart({ coinId }: IProps) {
+function Chart({ coinId, isDark }: IChartProps) {
   const [requestedChart, setRequestedChart] = useState({ type: "candle", time: "day" });
 
   const result = useQueries([
@@ -90,38 +91,40 @@ function Chart({ coinId }: IProps) {
 
   return (
     <>
-      {loading
-        ? <Loader />
-        : error
-        ? "Error"
-        : success && (
-            <div>
-              <ChartBtns>
-                <div>
-                  <ChartTypeBtn isActive={requestedChart.type === "candle"} value="candle" onClick={changeType}>
-                    <TbChartCandle />
-                  </ChartTypeBtn>
-                  <ChartTypeBtn isActive={requestedChart.type === "line"} value="line" onClick={changeType}>
-                    <RiLineChartLine />
-                  </ChartTypeBtn>
-                </div>
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        "Error"
+      ) : (
+        success && (
+          <div>
+            <ChartBtns>
+              <div>
+                <ChartTypeBtn isActive={requestedChart.type === "candle"} value="candle" onClick={changeType}>
+                  <TbChartCandle />
+                </ChartTypeBtn>
+                <ChartTypeBtn isActive={requestedChart.type === "line"} value="line" onClick={changeType}>
+                  <RiLineChartLine />
+                </ChartTypeBtn>
+              </div>
 
-                <div>
-                  <ChartTimeBtn isActive={requestedChart.time === "minute"} value="minute" onClick={changeTime}>
-                    M
-                  </ChartTimeBtn>
-                  <ChartTimeBtn isActive={requestedChart.time === "hour"} value="hour" onClick={changeTime}>
-                    H
-                  </ChartTimeBtn>
-                  <ChartTimeBtn isActive={requestedChart.time === "day"} value="day" onClick={changeTime}>
-                    D
-                  </ChartTimeBtn>
-                </div>
-              </ChartBtns>
+              <div>
+                <ChartTimeBtn isActive={requestedChart.time === "minute"} value="minute" onClick={changeTime}>
+                  M
+                </ChartTimeBtn>
+                <ChartTimeBtn isActive={requestedChart.time === "hour"} value="hour" onClick={changeTime}>
+                  H
+                </ChartTimeBtn>
+                <ChartTimeBtn isActive={requestedChart.time === "day"} value="day" onClick={changeTime}>
+                  D
+                </ChartTimeBtn>
+              </div>
+            </ChartBtns>
 
-              {requestedChart.type === "candle" ? <CandlestickChart data={chartData?.data} /> : requestedChart.type === "line" && <LineChart data={chartData?.data} />}
-            </div>
-          )}
+            {requestedChart.type === "candle" ? <CandlestickChart isDark={isDark} data={chartData?.data} /> : requestedChart.type === "line" && <LineChart isDark={isDark} data={chartData?.data} />}
+          </div>
+        )
+      )}
     </>
   );
 }
