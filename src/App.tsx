@@ -1,8 +1,9 @@
-import { useState } from "react";
 import { ThemeProvider, createGlobalStyle } from "styled-components";
 import { darkTheme, lightTheme } from "./theme";
 import Router from "./routes/Router";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "./atoms";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
@@ -68,13 +69,12 @@ a {
 `;
 
 function App() {
-  const [isDark, setIsDark] = useState(false);
-  const toggleDark = () => setIsDark(current => !current); // 현재 상태를 사용할 때는 함수를 사용하는게 좋음. 만약 함수가 아닌 !isDark 를 사용할 경우 다른 곳에서 isDark가 변경될 수 있기 때문에 버그 발생률이 생긴다.
+  const isDark = useRecoilValue(isDarkAtom);
   return (
     <>
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
         <GlobalStyle />
-        <Router isDark={isDark} toggleDark={toggleDark} />
+        <Router />
         <ReactQueryDevtools initialIsOpen={true} />
       </ThemeProvider>
     </>

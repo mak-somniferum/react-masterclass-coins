@@ -39,7 +39,6 @@ const ChartTypeBtn = styled(ChartTimeBtn)`
 `;
 interface IChartProps {
   coinId: string;
-  isDark: boolean;
 }
 
 interface IBtnProps {
@@ -47,7 +46,7 @@ interface IBtnProps {
   value: string;
 }
 
-function Chart({ coinId, isDark }: IChartProps) {
+function Chart({ coinId }: IChartProps) {
   const [requestedChart, setRequestedChart] = useState({ type: "candle", time: "day" });
 
   const result = useQueries([
@@ -121,7 +120,7 @@ function Chart({ coinId, isDark }: IChartProps) {
               </div>
             </ChartBtns>
 
-            {requestedChart.type === "candle" ? <CandlestickChart isDark={isDark} data={chartData?.data} /> : requestedChart.type === "line" && <LineChart isDark={isDark} data={chartData?.data} />}
+            {requestedChart.type === "candle" ? <CandlestickChart data={chartData?.data} /> : requestedChart.type === "line" && <LineChart data={chartData?.data} />}
           </div>
         )
       )}

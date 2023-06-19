@@ -1,13 +1,16 @@
 import ApexChart from "react-apexcharts";
 import { IHistorical } from "../../routes/interface";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "../../atoms";
 
 interface IProps {
   data: IHistorical | undefined;
-  isDark: boolean;
 }
 
-function CandlestickChart({ data, isDark }: IProps) {
+function CandlestickChart({ data }: IProps) {
   const datas = data?.Data.Data;
+  const isDark = useRecoilValue(isDarkAtom);
+
   return (
     <ApexChart
       type="candlestick"

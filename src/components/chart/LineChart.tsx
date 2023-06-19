@@ -1,13 +1,16 @@
 import ApexChart from "react-apexcharts";
 import { IHistorical } from "../../routes/interface";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "../../atoms";
 
 interface IProps {
   data: IHistorical | undefined;
-  isDark: boolean;
 }
 
-function LineChart({ data, isDark }: IProps) {
+function LineChart({ data }: IProps) {
   const datas = data?.Data.Data;
+  const isDark = useRecoilValue(isDarkAtom);
+
   return (
     <ApexChart
       type="line"
