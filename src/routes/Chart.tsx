@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useQueries } from "react-query";
 import { fetchHistoDay, fetchHistoHour, fetchHistoMinute } from "./api";
-import CandlestickChart from "../components/chart/CandlestickChart";
+import CandlestickChart from "../components/CandlestickChart";
 import styled from "styled-components";
 import { RiLineChartLine } from "react-icons/ri";
 import { TbChartCandle } from "react-icons/tb";
-import LineChart from "../components/chart/LineChart";
+import LineChart from "../components/LineChart";
 import Loader from "../components/Loader";
 
 const ChartBtns = styled.div`
@@ -26,11 +26,12 @@ const ChartTimeBtn = styled.button<IBtnProps>`
   color: ${props => (props.isActive ? props.theme.accentColor : props.theme.textColor)};
   border: 0;
   border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${props => props.theme.cardBgColor};
   cursor: pointer;
+  transition: 0.2s ease-in;
 
   &:hover {
-    background-color: #000;
+    background-color: ${props => props.theme.cardHoverBgColor};
   }
 `;
 

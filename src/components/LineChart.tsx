@@ -1,30 +1,23 @@
 import ApexChart from "react-apexcharts";
-import { IHistorical } from "../../routes/interface";
+import { IHistorical } from "../routes/interface";
 import { useRecoilValue } from "recoil";
-import { isDarkAtom } from "../../atoms";
+import { isDarkAtom } from "../atoms";
 
 interface IProps {
   data: IHistorical | undefined;
 }
 
-function CandlestickChart({ data }: IProps) {
+function LineChart({ data }: IProps) {
   const datas = data?.Data.Data;
   const isDark = useRecoilValue(isDarkAtom);
 
   return (
     <ApexChart
-      type="candlestick"
+      type="line"
       series={[
         {
-          name: "Price",
-          data:
-            datas?.map(priceInfo => {
-              const obj = {
-                x: new Date(priceInfo.time * 1000),
-                y: [Number(priceInfo.open), Number(priceInfo.high), Number(priceInfo.low), Number(priceInfo.close)],
-              };
-              return obj;
-            }) ?? [],
+          name: "Closing Price",
+          data: datas?.map(priceInfo => Number(priceInfo.close)) ?? [],
         },
       ]}
       options={{
@@ -41,7 +34,7 @@ function CandlestickChart({ data }: IProps) {
         },
         xaxis: {
           type: "datetime",
-          categories: datas?.map(time => time.time * 1000),
+          categories: datas?.map(priceInfo => priceInfo.time * 1000),
         },
         chart: {
           toolbar: { show: true },
@@ -49,9 +42,13 @@ function CandlestickChart({ data }: IProps) {
           height: 300,
           background: "transparent",
         },
+        stroke: {
+          curve: "smooth",
+          width: 3,
+        },
       }}
     />
   );
 }
 
-export default CandlestickChart;
+export default LineChart;

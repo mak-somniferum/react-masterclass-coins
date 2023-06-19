@@ -8,6 +8,7 @@ import { ICoinInfo, IPriceInfo } from "./interface";
 import { HiHome } from "react-icons/hi";
 import OrderBook from "./OrderBook";
 import Loader from "../components/Loader";
+import ToggleMode from "../components/ToggleMode";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -31,12 +32,12 @@ const GoBack = styled.div`
     display: flex;
     font-size: 1.4rem;
     border-radius: 10px;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: ${props => props.theme.cardBgColor};
     padding: 10px;
+    transition: 0.2s ease-in;
 
     &:hover {
-      background-color: #000;
-      color: ${props => props.theme.accentColor};
+      background-color: ${props => props.theme.cardHoverBgColor};
     }
   }
 `;
@@ -50,7 +51,7 @@ const Overview = styled.div`
   display: flex;
   justify-content: space-between;
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${props => props.theme.cardBgColor};
   padding: 10px 20px;
   margin: 10px 0;
 `;
@@ -97,11 +98,12 @@ const Tab = styled.div<{ isActive: boolean }>`
   font-size: 12px;
   font-size: 400;
   border-radius: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${props => props.theme.cardBgColor};
   color: ${props => (props.isActive ? props.theme.accentColor : props.theme.textColor)};
+  transition: 0.2s ease-in;
 
   &:hover {
-    background-color: #000;
+    background-color: ${props => props.theme.cardHoverBgColor};
   }
 
   a {
@@ -148,6 +150,7 @@ function Coin({}: ICoinProps) {
           </Link>
         </GoBack>
         <Title>{state?.name ? state.name : loading ? "Loading..." : `${infoData?.CoinName}`}</Title>
+        <ToggleMode />
       </Header>
       {loading ? (
         <Loader />

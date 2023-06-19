@@ -8,6 +8,7 @@ import { ICoin } from "./interface";
 import Loader from "../components/Loader";
 import { useSetRecoilState } from "recoil";
 import { isDarkAtom } from "../atoms";
+import ToggleMode from "../components/ToggleMode";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -20,6 +21,7 @@ const Header = styled.header`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 `;
 
 const CoinList = styled.ul``;
@@ -29,7 +31,7 @@ const Coin = styled.li`
   color: ${props => props.theme.textColor};
   border-radius: 15px;
   margin-bottom: 10px;
-  border: 1px solid white;
+  transition: 0.2s ease-in;
 
   a {
     display: flex;
@@ -39,9 +41,7 @@ const Coin = styled.li`
   }
 
   &:hover {
-    a {
-      color: ${props => props.theme.accentColor};
-    }
+    background-color: ${props => props.theme.cardHoverBgColor};
   }
 `;
 
@@ -68,7 +68,7 @@ function Coins({}: ICoinsProps) {
       </Helmet>
       <Header>
         <Title>Coins</Title>
-        <button onClick={toggleIsDark}>Toggle Mode</button>
+        <ToggleMode />
       </Header>
       {isLoading ? (
         <Loader />
